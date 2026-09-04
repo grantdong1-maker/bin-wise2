@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bin-Wise | Smart Recycling App</title>
+    <style>
+        :root {
+            --primary-green: #2e7d32;
+            --primary-dark: #1b5e20;
+            --light-green: #e8f5e9;
+            --accent-green: #c8e6c9;
+            --yellow-bin: #fbc02d;
+            --red-bin: #e53935;
+            --green-bin: #43a047;
+            --dark-text: #222222;
+            --gray-text: #555555;
+            --light-text: #ffffff;
+            --shadow-sm: 0 4px 10px rgba(0,0,0,0.05);
+            --shadow-lg: 0 15px 35px rgba(46, 125, 50, 0.15);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: #fafafa;
+            color: var(--dark-text);
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        header {
+            background-color: var(--primary-green);
+            color: var(--light-text);
+            padding: 1.2rem 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            gap: 25px;
+        }
+
+        nav a {
+            color: var(--light-text);
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: color 0.2s ease;
+        }
+
+        nav a:hover {
+            color: var(--accent-green);
+        }
+
+        /* Hero Section with Interactive Demo */
+        .hero {
+            background-color: var(--light-green);
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 4rem 8%;
+            gap: 40px;
+            border-bottom: 2px solid var(--accent-green);
+        }
+
+        .hero-text {
+            flex: 1;
+            max-width: 600px;
+        }
+
+        .hero-text h1 {
+            font-size: 3.8rem;
+            color: var(--primary-dark);
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+        }
+
+        .hero-text p {
+            font-size: 1.3rem;
+            margin-bottom: 2.5rem;
+            color: var(--gray-text);
+        }
+
+        .cta-buttons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 16px 32px;
+            border-radius: 40px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            cursor: pointer;
+            border: none;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-green);
+            color: var(--light-text);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--primary-dark);
+            border: 3px solid var(--primary-green);
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--primary-green);
+            color: var(--light-text);
+            transform: translateY(-3px);
+        }
+
+        /* Interactive Phone Demo Mockup */
+        .demo-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+        }
+
+        .phone-frame {
+            width: 320px;
+            height: 620px;
+            background-color: #111;
+            border-radius: 45px;
+            padding: 12px;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.25);
+            border: 4px solid #333;
+            position: relative;
+        }
+
+        .phone-notch {
+            width: 120px;
+            height: 20px;
+            background-color: #111;
+            position: absolute;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+            z-index: 10;
+        }
+
+        .phone-screen {
+            background-color: #ffffff;
+            width: 100%;
+            height: 100%;
+            border-radius: 35px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            padding: 35px 20px 20px 20px;
+            text-align: center;
+        }
+
+        .app-header {
+            font-weight: 800;
+            color: var(--primary-green);
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+
+        .demo-selector {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .demo-chip {
+            padding: 6px 12px;
+            background-color: #f0f0f0;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid #ddd;
+            transition: all 0.2s;
+        }
+
+        .demo-chip.active {
+            background-color: var(--primary-green);
+            color: white;
+            border-color: var(--primary-green);
+        }
+
+        .scanner-view {
+            width: 100%;
+            height: 220px;
+            background-color: #f5f5f5;
+            border-radius: 15px;
+            border: 2px dashed #ccc;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            margin-bottom: 15px;
+            overflow: hidden;
+            padding: 10px;
+        }
+
+        .item-preview-img {
+            max-width: 130px;
+            max-height: 130px;
+            width: auto;
+            height: auto;
+            object-fit: contain;
+            border-radius: 10px;
+            margin-bottom: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+
+        .scan-line {
+            position: absolute;
+            width: 100%;
+            height: 3px;
+            background-color: var(--primary-green);
+            top: 0;
+            box-shadow: 0 0 8px var(--primary-green);
+            animation: scanAnim 2s infinite ease-in-out;
+            z-index: 2;
+        }
+
+        @keyframes scanAnim {
+            0% { top: 0%; }
+            50% { top: 95%; }
+            100% { top: 0%; }
+        }
+
+        .result-box {
+            padding: 15px;
+            border-radius: 12px;
+            background-color: #f9f9f9;
+            border: 1px solid #eee;
+            margin-top: auto;
+        }
+
+        .result-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #777;
+            margin-bottom: 5px;
+        }
+
+        .bin-badge {
+            display: inline-block;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 800;
+            color: white;
+            font-size: 1rem;
+            margin-top: 5px;
+        }
+
+        /* Global Sections */
+        .section-padding {
+            padding: 6rem 8%;
+        }
+
+        .section-title {
+            font-size: 2.8rem;
+            margin-bottom: 1rem;
+            color: var(--primary-dark);
+            text-align: center;
+        }
+
+        .section-subtitle {
+            text-align: center;
+            font-size: 1.2rem;
+            color: var(--gray-text);
+            margin-bottom: 4rem;
+        }
+
+        /* Expanded FAQ Section */
+        .faq-bg {
+            background-color: var(--light-green);
+            border-top: 2px solid var(--accent-green);
+            border-bottom: 2px solid var(--accent-green);
+        }
+
+        .faq-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background-color: white;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow-sm);
+            border: 1px solid #e0e0e0;
+            transition: border-color 0.3s;
+        }
+
+        .faq-item.active {
+            border-color: var(--primary-green);
+        }
+
+        .faq-question {
+            padding: 24px;
+            width: 100%;
+            text-align: left;
+            background: none;
+            border: none;
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--primary-dark);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .faq-question:hover {
+            background-color: #f9fdf9;
+        }
+
+        .faq-answer {
+            padding: 0 24px;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+            color: var(--gray-text);
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+
+        .faq-item.active .faq-answer {
+            padding: 0 24px 24px 24px;
+            max-height: 300px;
+        }
+
+        .faq-icon {
+            font-size: 1.4rem;
+            transition: transform 0.3s ease;
+            color: var(--primary-green);
+        }
+
+        .faq-item.active .faq-icon {
+            transform: rotate(45deg);
+        }
+
+        /* Footer */
+        footer {
+            background-color: #111;
+            color: #ddd;
+            padding: 4rem 8%;
+            text-align: center;
+        }
+
+        @media (max-width: 992px) {
+            .hero {
+                flex-direction: column;
+                text-align: center;
+                padding-top: 3rem;
+            }
+            .hero-text h1 { font-size: 3rem; }
+            .cta-buttons { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo" onclick="window.scrollTo(0,0)">
+            <span>♻️</span> Bin-Wise
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#home">Home</a></li>
+                <li><a href="#demo">Live Demo</a></li>
+                <li><a href="#faq">FAQ</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <section id="home" class="hero">
+            <div class="hero-text">
+                <h1>Recycling Made Simple & Instant.</h1>
+                <p>Never guess which bin an item goes into again. Bin-Wise instantly identifies waste packaging and matches it directly to your local council rules.</p>
+                <div class="cta-buttons">
+                    <button class="btn btn-primary" onclick="alert('Redirecting to the App Store!')">Download for iOS</button>
+                    <button class="btn btn-secondary" onclick="alert('Redirecting to Google Play!')">Download for Android</button>
+                </div>
+            </div>
+
+            <div class="demo-container" id="demo">
+                <div class="phone-frame">
+                    <div class="phone-notch"></div>
+                    <div class="phone-screen">
+                        <div class="app-header">♻️ Bin-Wise Scanner</div>
+                        <p style="font-size: 0.8rem; color: #666; margin-bottom: 10px;">Select an item to simulate scanning:</p>
+                        
+                        <div class="demo-selector">
+                            <span class="demo-chip active" onclick="updateDemo('coffee', this)">Coffee Cup</span>
+                            <span class="demo-chip" onclick="updateDemo('apple', this)">Apple Core</span>
+                            <span class="demo-chip" onclick="updateDemo('battery', this)">Battery</span>
+                        </div>
+
+                        <div class="scanner-view">
+                            <div class="scan-line"></div>
+                            <img id="demoImg" class="item-preview-img" src="coffee.jpg" alt="Coffee Cup">
+                            <small id="demoName" style="color: #666; font-weight: 600;">Coffee Cup & Lid</small>
+                        </div>
+
+                        <div class="result-box">
+                            <div class="result-title">City Council Rule Result:</div>
+                            <div class="bin-badge" id="demoBinBadge" style="background-color: var(--yellow-bin);">
+                                🟡 Recycling Bin
+                            </div>
+                            <p id="demoNote" style="font-size: 0.75rem; color: #555; margin-top: 6px;">Paper cup goes to recycling. Check local lid rules.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="faq" class="section-padding faq-bg">
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            <p class="section-subtitle">Everything you need to know about how Bin-Wise works in your neighborhood.</p>
+
+            <div class="faq-container">
+                
+                <div class="faq-item active">
+                    <button class="faq-question" onclick="toggleFAQ(this)">
+                        Does Bin-Wise know my specific council's recycling rules?
+                        <span class="faq-icon">➕</span>
+                    </button>
+                    <div class="faq-answer">
+                        Yes! Recycling guidelines vary significantly between suburbs and cities. Bin-Wise utilizes your GPS location (or an entered postal code) to cross-reference every scanned item against your local council's exact waste management database.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFAQ(this)">
+                        What happens with tricky items like e-waste or soft plastics?
+                        <span class="faq-icon">➕</span>
+                    </button>
+                    <div class="faq-answer">
+                        If an item shouldn't go into standard household kerbside bins (like batteries, electronics, or soft plastics), Bin-Wise will alert you instantly and provide directions to the nearest community drop-off point or specialized recycling hub.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFAQ(this)">
+                        Does the app work offline if I don't have mobile data?
+                        <span class="faq-icon">➕</span>
+                    </button>
+                    <div class="faq-answer">
+                        Yes. Bin-Wise downloads a lightweight version of your local council's waste database onto your device during initial setup, ensuring you can snap items even when you're in the basement or outside of cellular service.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFAQ(this)">
+                        How does Bin-Wise work for apartment buildings with shared bins?
+                        <span class="faq-icon">➕</span>
+                    </button>
+                    <div class="faq-answer">
+                        Bin-Wise allows users to set up an "Apartment Profile" which adjusts instructions to match communal bin setups, helping reduce contamination fees charged to entire residential complexes.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFAQ(this)">
+                        Is my location data tracked or stored?
+                        <span class="faq-icon">➕</span>
+                    </button>
+                    <div class="faq-answer">
+                        No. Privacy is a priority. Your location is strictly used on-device to match you with local bin rules. We do not sell or store personal user location data.
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <button class="faq-question" onclick="toggleFAQ(this)">
+                        Can schools, sports clubs, or businesses sign up?
+                        <span class="faq-icon">➕</span>
+                    </button>
+                    <div class="faq-answer">
+                        Absolutely. We offer tailored enterprise and educational programs (like our Sort-Smart Station integrations) to help schools and venues improve sorting accuracy and track total waste diverted from landfill.
+                    </div>
+                </div>
+
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Bin-Wise App. All rights reserved.</p>
+        <p><small>The easiest sustainable choice should also be the correct one.</small></p>
+    </footer>
+
+    <script>
+        // Data mapping to local image files
+        const demoData = {
+            coffee: {
+                img: 'coffee.jpg',
+                name: 'Coffee Cup & Lid',
+                bin: '🟡 Recycling Bin',
+                color: 'var(--yellow-bin)',
+                note: 'Paper cup goes to recycling. Check local lid rules.'
+            },
+            apple: {
+                img: 'apple.jpg',
+                name: 'Apple Core',
+                bin: '🟢 Organic / FOGO Bin',
+                color: 'var(--green-bin)',
+                note: 'Food scraps belong in green organics or compost.'
+            },
+            battery: {
+                img: 'battery.jpg',
+                name: 'AA Battery',
+                bin: '🔴 E-Waste Drop-off',
+                color: 'var(--red-bin)',
+                note: 'Do NOT bin. Drop off at local supermarket collection.'
+            }
+        };
+
+        function updateDemo(key, element) {
+            document.querySelectorAll('.demo-chip').forEach(chip => chip.classList.remove('active'));
+            element.classList.add('active');
+
+            const item = demoData[key];
+            const imgElement = document.getElementById('demoImg');
+            
+            imgElement.src = item.img;
+            imgElement.alt = item.name;
+            document.getElementById('demoName').innerText = item.name;
+            
+            const badge = document.getElementById('demoBinBadge');
+            badge.innerText = item.bin;
+            badge.style.backgroundColor = item.color;
+            
+            document.getElementById('demoNote').innerText = item.note;
+        }
+
+        // FAQ Toggle
+        function toggleFAQ(button) {
+            const item = button.parentElement;
+            const isActive = item.classList.contains('active');
+            
+            document.querySelectorAll('.faq-item').forEach(el => {
+                el.classList.remove('active');
+            });
+            
+            if (!isActive) {
+                item.classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>
